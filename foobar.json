@@ -1,1 +1,8 @@
-{"foo":3,"bar":12}
+{
+	"data": [
+		{"id": 1, "foo": "5", "bar": "ciastek"},
+		{"id": 2, "foo": "Stefan", "bar": "Mietek"},
+		{"id": 3, "foo": "seek", "bar": "destroy"},
+		{"id": 4, "foo": "lubie", "bar": "placki"}	
+	]
+}

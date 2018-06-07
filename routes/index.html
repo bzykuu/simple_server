@@ -5,26 +5,16 @@
   <title>foobar</title>
 </head>
 <body>
-	Derp
-
 	<div>
-	  <input id="foo" type="text" placeholder="foo" name="foo">
-	  <input id="bar" type="text" placeholder="bar" name="bar">
-	  <button id="update">Add</button>
+		<input id="foo" type="text" placeholder="foo" name="foo">
+		<input id="bar" type="text" placeholder="bar" name="bar">
+		<button id="add">New</button>
+		<button id="update" recordId="0" disabled>Update</button>
 	</div>
 
 	<div>
-		<button id="create">Create</button>
-	</div>
-
-	<div>
-		<button id="delete">Delete</button>
-	</div>
-
-	<div>
-		<button id="show">Show</button>
-		<p id="showFoo"></p>
-		<p id="showBar"></p>
+		<table id="fooList">
+		</table>
 	</div>
 
 

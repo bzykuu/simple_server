@@ -1,5 +1,5 @@
-var update = document.getElementById('update');
-update.addEventListener('click', function () {
+var add = document.getElementById('add');
+add.addEventListener('click', function () {
 	fetch('foobar', {
 	  method: 'put',
 	  headers: {'Content-Type': 'application/json'},
@@ -8,36 +8,94 @@ update.addEventListener('click', function () {
 	    'bar': document.getElementById('bar').value
 	  })
 	})
+	.then(()=> updateList())
 })
 
-var deleteFile = document.getElementById('delete');
-deleteFile.addEventListener('click', function () {
-	fetch('foobar', {
-	  method: 'delete',
-	  headers: {'Content-Type': 'application/json'},
-	  body: ''
-	})
-})
 
-var createFile = document.getElementById('create');
-createFile.addEventListener('click', function () {
-	var foobar = {"foo":0,"bar":0};
+var update = document.getElementById('update');
+update.addEventListener('click', function () {
+	var foobar = {
+		"id": this.recordId,
+		'foo': document.getElementById('foo').value,
+		'bar': document.getElementById('bar').value
+	}
 	fetch('foobar', {
 	  method: 'post',
 	  headers: {'Content-Type': 'application/json'},
 	  body: JSON.stringify(foobar)
 	})
+	.then(()=> updateList())
 })
 
-var show = document.getElementById('show');
-show.addEventListener('click', function () {
+var getData = function () {
+	fetch('foobar')
+	.then(res => {
+		if (res.ok) return res.json()
+	})
+}
+
+var updateList = function() {
 	fetch('foobar')
 	.then(res => {
 		if (res.ok) return res.json()
 	})
 	.then(foobar => {
-		console.log("foobar: " + foobar.foo);
-		document.getElementById('showFoo').innerHTML = "foo: " + foobar.foo;
-		document.getElementById('showBar').innerHTML = "bar: " + foobar.bar;
+		clearUpdate();
+
+		var list = document.getElementById("fooList");
+		clearChildren(list);
+
+		for (var i=0; i<foobar.data.length; i++) {
+			writeLine(foobar.data[i], list);
+		}
 	})
-})
+}
+updateList();
+
+var clearUpdate = function() {
+	var foo = document.getElementById('foo');
+	var bar = document.getElementById('bar');
+	var update = document.getElementById('update');
+
+	foo.value = "";
+	bar.value = "";
+	update.disabled = true;
+	update.recordId = 0;
+}
+
+var clearChildren = function(element) {
+	while (element.childNodes[0]) {
+		element.removeChild(element.childNodes[0]);
+	};
+}
+
+var writeLine = function(data, list) {
+	var line = document.createElement("tr");
+	var foo = document.createElement("td");
+	var bar = document.createElement("td");
+	var delButton = document.createElement("button");
+
+	foo.addEventListener('click', function(){updateUpdate(data)});
+	bar.addEventListener('click', function(){updateUpdate(data)});
+	foo.innerHTML = data.foo;
+	bar.innerHTML = data.bar;
+	delButton.innerHTML = "delete";
+	delButton.addEventListener('click', function () {
+		fetch('foobar/' + data.id, {
+			method: 'delete'
+		})
+		.then(() => updateList())
+	});
+
+	line.appendChild(foo);
+	line.appendChild(bar);
+	line.appendChild(delButton);
+	list.appendChild(line);
+}
+
+var updateUpdate = function(data){
+	document.getElementById('foo').value = data.foo;
+	document.getElementById('bar').value = data.bar;
+	document.getElementById('update').recordId = data.id;
+	document.getElementById('update').disabled = false;
+}
