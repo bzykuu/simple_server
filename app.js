@@ -7,7 +7,12 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var foobarRouter = require('./routes/foobar');
 
+var mongo = require('mongodb');
+var monk = require('monk');
+var db = monk('mongodb://stefan1:mietek1@ds255260.mlab.com:55260/foobardb');
+
 var app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -18,6 +23,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Make our db accessible to our router
+app.use(function(req,res,next){
+    req.db = db;
+    next();
+});
 
 app.use('/', indexRouter);
 app.use('/foobar', foobarRouter);

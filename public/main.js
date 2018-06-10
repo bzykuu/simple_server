@@ -30,6 +30,7 @@ update.addEventListener('click', function () {
 var getData = function () {
 	fetch('foobar')
 	.then(res => {
+		console.log("hmm " + res.json());
 		if (res.ok) return res.json()
 	})
 }
@@ -44,9 +45,8 @@ var updateList = function() {
 
 		var list = document.getElementById("fooList");
 		clearChildren(list);
-
-		for (var i=0; i<foobar.data.length; i++) {
-			writeLine(foobar.data[i], list);
+		for (var i=0; i<foobar.length; i++) {
+			writeLine(foobar[i], list);
 		}
 	})
 }
@@ -81,7 +81,7 @@ var writeLine = function(data, list) {
 	bar.innerHTML = data.bar;
 	delButton.innerHTML = "delete";
 	delButton.addEventListener('click', function () {
-		fetch('foobar/' + data.id, {
+		fetch('foobar/' + data._id, {
 			method: 'delete'
 		})
 		.then(() => updateList())
@@ -96,6 +96,6 @@ var writeLine = function(data, list) {
 var updateUpdate = function(data){
 	document.getElementById('foo').value = data.foo;
 	document.getElementById('bar').value = data.bar;
-	document.getElementById('update').recordId = data.id;
+	document.getElementById('update').recordId = data._id;
 	document.getElementById('update').disabled = false;
 }

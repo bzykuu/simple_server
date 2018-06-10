@@ -7,74 +7,39 @@ var router = express.Router();
 router.use(bodyParser.urlencoded({extended: true}))
 
 router.get('/', function(req, res, next) {
-	fs.readFile("foobar.json", "utf8", function(err, data){
-	  if(err) throw err
-		else {
-		  var foobar = JSON.parse(data);
-		  res.json(foobar);
-		}
+	var collection = req.db.get('foobarcollection');
+	collection.find({}, {}, function(err, results){
+		res.json(results);
 	});
 });
 
 router.put('/', (req, res, next) => {
-	fs.readFile("foobar.json", "utf8", function(err, data){
-	  if(err) throw err
+	var collection = req.db.get('foobarcollection');
+	collection.insert({
+		"foo": req.body.foo,
+		"bar": req.body.bar
+	}, function(err, doc) {
+		if(err) throw err
 		else {
-		  var foobar = JSON.parse(data);
-		  var newEntry = {
-		  	"id": foobar.data.length + 1,
-		  	"foo": req.body.foo,
-		  	"bar": req.body.bar
-		  };
-		  foobar.data.push(newEntry);
-		  fs.writeFile("foobar.json", JSON.stringify(foobar), (err) =>{
-		  	if (err) throw err
-		  	else res.end();
-		  });
+			res.end();
 		}
 	});
 })
 
 router.post('/', function(req, res, next) {
-	fs.readFile("foobar.json", "utf8", function(err, data){
-	  if(err) throw err
-		else {
-		  var foobar = JSON.parse(data);
-		  var findId = foobar.data.findIndex(function(record) {
-		  	return record.id == req.body.id;
-		  });
-		  foobar.data[findId].foo = req.body.foo;
-		  foobar.data[findId].bar = req.body.bar;
-		  fs.writeFile("foobar.json", JSON.stringify(foobar), (err) =>{
-		  	if (err) throw err
-		  	else res.end();
-		  });
-		}
-	});
+	var collection = req.db.get('foobarcollection');
+	collection.update(
+		{_id: req.body.id},
+		{"foo": req.body.foo, "bar": req.body.bar},{},
+		(err, result) => {res.end()}
+		);
 });
 
 router.delete('/:id', function(req, res, next) {
-	fs.readFile("foobar.json", "utf8", function(err, data){
-	  if(err) throw err
-		else {
-		  var foobar = JSON.parse(data);
-		  var findId = foobar.data.findIndex(function(record) {
-		  	return record.id == req.params.id;
-		  });
-		  //remove entry
-		  foobar.data.splice(findId, 1);
-		  //update ids
-		  for (var i=findId; i<foobar.data.length; i++){
-		  	foobar.data[i].id--;
-		  }
-
-		  fs.writeFile("foobar.json", JSON.stringify(foobar), (err) =>{
-		  	if (err) throw err
-		  	else res.end();
-		  });
-		}
+	var collection = req.db.get('foobarcollection');
+	collection.remove({"_id": req.params.id}, function(err){
+		res.end();
 	});
-	res.end();
 });
 
 module.exports = router;
